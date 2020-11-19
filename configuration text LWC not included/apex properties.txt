@@ -1,0 +1,60 @@
+Public class BasicClass {
+ 
+   // Property declaration
+   access_modifier return_type property_name {
+      get {
+         //Get accessor code block
+      }
+      set {
+         //Set accessor code block
+      }
+   } 
+}
+
+
+
+public class BasicProperty {
+   public integer prop {
+      get { return prop; }
+      set { prop = value; }
+   }
+}
+
+
+BasicProperty bp = new BasicProperty();
+bp.prop = 5;                   // Calls set accessor
+System.assertEquals(5, bp.prop);   // Calls get accessor
+
+
+
+
+
+
+public class StaticProperty {
+   private static integer StaticMember;
+   private integer NonStaticMember;
+ 
+   // The following produces a system error
+   // public static integer MyBadStaticProp { return NonStaticMember; }
+ 
+   public static integer MyGoodStaticProp { 
+     get {return StaticMember;} 
+     set { StaticMember = value; } 
+   }  
+   public integer MyGoodNonStaticProp { 
+     get {return NonStaticMember;} 
+     set { NonStaticMember = value; } 
+   } 
+}
+
+
+
+
+
+StaticProperty sp = new StaticProperty();
+// The following produces a system error: a static variable cannot be
+// accessed through an object instance
+// sp.MyGoodStaticProp = 5;
+ 
+// The following does not produce an error
+StaticProperty.MyGoodStaticProp = 5;

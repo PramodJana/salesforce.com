@@ -1,0 +1,50 @@
+ExpensesController(Apex Class)
+public with sharing class ExpensesController {
+    // STERN LECTURE ABOUT WHAT'S MISSING HERE COMING SOON
+    @AuraEnabled
+    public static List<Expense__c> getExpenses() {
+        return [SELECT Id, Name, Amount__c, Client__c, Date__c,
+                       Reimbursed__c, CreatedDate
+                FROM Expense__c];
+    }
+	
+	 @AuraEnabled
+    public static Expense__c saveExpense(Expense__c expense) {
+        // Perform isUpdateable() checking first, then
+        upsert expense;
+        return expense;
+    }
+}
+
+
+
+Aura Component
+<aura:component controller="ExpensesController">
+<aura:handler name="init" action="{!c.doInit}" value="{!this}"/>
+<aura:attribute name="expenses" type="Expense__c[]"/>
+
+
+<aura:component/>
+
+
+
+
+
+Aura Controller Class
+// Load expenses from Salesforce
+    doInit: function(component, event, helper) {
+        // Create the action
+        let action = component.get("c.getExpenses");
+        // Add callback behavior for when response is received
+        action.setCallback(this, function(response) {
+            let state = response.getState();
+            if (state === "SUCCESS") {
+                component.set("v.expenses", response.getReturnValue());
+            }
+            else {
+                console.log("Failed with state: " + state);
+            }
+        });
+        // Send action off to be executed
+        $A.enqueueAction(action);
+    },

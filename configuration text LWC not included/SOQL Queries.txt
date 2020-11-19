@@ -1,0 +1,50 @@
+Basic SOQL Syntax
+SELECT fields FROM ObjectName [WHERE Condition]
+
+Filtering Query Results with Conditions
+SELECT Name,Phone FROM Account WHERE Name='SFDC Computing'
+SELECT Name,Phone FROM Account WHERE (Name='SFDC Computing' AND NumberOfEmployees>25)
+SELECT Name,Phone FROM Account WHERE (Name='SFDC Computing' OR (NumberOfEmployees>25 AND BillingCity='Los Angeles'))
+
+
+Ordering Query Results
+SELECT Name,Phone FROM Account ORDER BY Name
+SELECT Name,Phone FROM Account ORDER BY Name DESC
+
+
+SELECT Name,Phone FROM Account 
+                   WHERE (Name = 'SFDC Computing' AND NumberOfEmployees>25)
+                   ORDER BY Name
+                   LIMIT 10
+
+
+
+
+
+Accessing Variables in SOQL Queries
+String targetDepartment = 'Wingo';
+Contact[] techContacts = [SELECT FirstName,LastName 
+                          FROM Contact WHERE Department=:targetDepartment];
+						  
+
+
+Querying Related Records
+SELECT Name, (SELECT LastName FROM Contacts) FROM Account WHERE Name = 'SFDC Computing'
+
+
+Account[] acctsWithContacts = [SELECT Name, (SELECT FirstName,LastName FROM Contacts)
+                               FROM Account 
+                               WHERE Name = 'SFDC Computing'];
+// Get child records
+Contact[] cts = acctsWithContacts[0].Contacts;
+System.debug('Name of first associated contact: ' 
+             + cts[0].FirstName + ', ' + cts[0].LastName);
+			 
+
+Contact[] cts = [SELECT Account.Name FROM Contact 
+                 WHERE FirstName = 'Carol' AND LastName='Ruiz'];
+Contact carol = cts[0];
+String acctName = carol.Account.Name;
+System.debug('Carol\'s account name is ' + acctName);
+
+

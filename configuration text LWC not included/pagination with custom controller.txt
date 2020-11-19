@@ -1,0 +1,70 @@
+Step 3 – In Visualforce editor paste the following code:
+
+<apex:page controller=”Pagination” sidebar=”false” showHeader=”false”>
+<apex:form >
+<apex:pageBlock id=”details”>
+<apex:pageblockTable value=”{!acclist}” var=”acc”>
+<apex:column value=”{!acc.Name}”/>
+<apex:column value=”{!acc.website}”/>
+<apex:column value=”{!acc.AnnualRevenue}”/>
+<apex:column value=”{!acc.Description}”/>
+<apex:column value=”{!acc.Type}”/>
+</apex:pageblockTable>
+<apex:pageblockButtons >
+<apex:commandButton value=”First Page” rerender=”details” action=”{!FirstPage}” disabled=”{!prev}”/>
+<apex:commandButton value=”Previous” rerender=”details” action=”{!previous}” disabled=”{!prev}”/>
+<apex:commandButton value=”Next” rerender=”details” action=”{!next}” disabled=”{!nxt}”/>
+<apex:commandButton value=”Last Page” rerender=”details” action=”{!LastPage}” disabled=”{!nxt}”/>
+</apex:pageblockButtons>
+</apex:pageBlock>
+</apex:form></apex:page>
+Step 4 – Paste this controller code in Apex Class editor:
+
+public class Pagination
+{
+private integer totalRecs = 0;
+private integer OffsetSize = 0;
+private integer LimitSize= 10;
+public Pagination()
+{
+totalRecs = [select count() from account];
+}
+public List<account> getacclist()
+{
+List<account> acc = Database.Query(‘SELECT Name, website, AnnualRevenue, description, Type FROM account LIMIT :LimitSize OFFSET :OffsetSize’);
+System.debug(‘Values are ‘ + acc);
+return acc;
+}
+public void FirstPage()
+{
+OffsetSize = 0;
+}
+public void previous()
+{
+OffsetSize = OffsetSize – LimitSize;
+}public void next()
+{
+OffsetSize = OffsetSize + LimitSize;
+}public void LastPage()
+{
+OffsetSize = totalrecs – math.mod(totalRecs,LimitSize);
+}
+public boolean getprev()
+{
+if(OffsetSize == 0)
+return true;
+else
+return false;
+}
+public boolean getnxt()
+{
+if((OffsetSize + LimitSize) > totalRecs)
+return true;
+else
+return false;
+}
+}
+ 
+
+“Save” this code
+
